@@ -1,0 +1,57 @@
+url,subject,body,label
+https://www.example.com,Weekly project update,Here is the normal weekly update for your team workspace.,0
+https://example.com/about,Welcome to Example,Thanks for visiting our documentation and company information page.,0
+https://docs.example.com/getting-started,Getting started guide,Your requested guide is available in the documentation portal.,0
+https://support.example.com/help-center,Support ticket received,We received your support ticket and will respond during business hours.,0
+https://blog.example.com/security-tips,Security tips newsletter,Read our latest educational article about password hygiene and safe browsing.,0
+https://demo-shop.test/products,Product catalog update,New demo products were added to the test catalog this week.,0
+https://demo-shop.test/cart,Cart reminder,You left demo items in your cart during testing.,0
+https://demo-shop.test/checkout,Demo order receipt,Thank you for testing the demo checkout flow.,0
+https://portal.example.org/dashboard,Dashboard notification,Your dashboard report is ready for review.,0
+https://learn.example.org/courses/python,Course enrollment confirmed,Your enrollment in the Python basics course has been confirmed.,0
+https://community.example.org/forum,Forum reply notification,A community member replied to your discussion thread.,0
+https://status.example.net/incidents,Status page update,The scheduled maintenance window has been completed.,0
+https://api.example.net/v1/docs,API documentation update,Version one documentation received minor copy updates.,0
+https://newsletter.example.net/archive,Newsletter archive,Your monthly newsletter archive is ready to read.,0
+https://events.example.test/register,Event registration confirmed,You are registered for the demo security awareness webinar.,0
+https://careers.example.test/jobs,Application received,Your test application was received by the demo careers portal.,0
+https://static.example.com/assets/logo.png,Asset delivery notice,The requested static asset has been generated successfully.,0
+https://cdn.example.net/images/banner.jpg,Image upload complete,Your demo banner image finished processing.,0
+https://mail.example.org/login,Mailbox sign-in notice,You signed in to your demo mailbox from a known device.,0
+https://research.example.org/report,Research report published,The public research report is now available for download.,0
+https://training.example.test/module,Training module reminder,Please complete the assigned training module when convenient.,0
+https://billing.example.org/invoices,Invoice available,Your regular demo invoice is available in the billing portal.,0
+https://calendar.example.net/invite,Meeting invite,You have been invited to a project planning meeting.,0
+https://files.example.test/shared,Shared file notification,A teammate shared a harmless demo document with you.,0
+https://profile.example.org/settings,Profile settings changed,Your profile display name was updated successfully.,0
+https://secure-login-example.net/verify-account,Account suspended,Verify your account immediately to avoid permanent suspension.,1
+http://example-login-secure.test/account-update,Urgent account update,Your account will be disabled unless you update your password now.,1
+http://verify-user-example.net/login/confirm,Verify now,Click the verification page and confirm your login session urgently.,1
+https://account-update-example.test/security-check,Security alert,Unusual activity detected please confirm your account details today.,1
+http://secure-example-login.net/password-reset,Password reset required,Your password expires now verify your identity to continue access.,1
+https://example.com.login-check.test/session,Session validation required,Your login session is invalid confirm account ownership immediately.,1
+http://192.168.10.25/login/verify,Immediate verification,Open the secure page and verify your account information now.,1
+http://10.0.0.8/account/update,Account update required,Your account profile requires urgent update to prevent restriction.,1
+https://confirm-account-example.net/signin,Confirm your account,Confirm password and account details to restore access.,1
+http://security-alert-example.test/verify-now,Urgent security alert,Verify now because suspicious login activity was detected.,1
+https://user-auth-example.net/login?session=88421,Login confirmation,We blocked a login attempt confirm your account immediately.,1
+http://example-support-verify.test/update?account=12345,Support verification needed,Update payment and account data to keep your service active.,1
+https://safe-example.com@verify-login-example.net,Important account notice,Secure login verification required for your wallet account.,1
+http://login.example-security-check.test/confirm-password,Confirm password,Your account is locked confirm password to unlock access.,1
+https://billing-update-example.net/secure/verify,Payment verification,Your payment failed verify billing information immediately.,1
+http://demo-shop.test.secure-check-example.net/login,Demo shop security check,Secure login required to prevent account suspension.,1
+https://example-authentication.test/signin/verify,Authentication warning,Verify your sign in now to prevent account closure.,1
+http://account-review-example.net/update-profile,Account review,Update profile information urgently or service may stop.,1
+https://urgent-verify-example.test/account-suspended,Account suspended warning,Your account has been suspended verify now to restore it.,1
+http://secure-login-example.net/confirm?token=998877,Confirm token,Use the secure token to confirm your account password.,1
+https://verify-example.test/login?user=demo&step=confirm,Verify login step,Confirm login details and update security settings immediately.,1
+http://example-password-reset.net/secure-account,Password reset alert,Reset password and secure account now due to suspicious activity.,1
+https://session-check-example.test/validate-login,Validate session,Your session will expire validate login credentials urgently.,1
+http://signin-confirm-example.net/account/verify,Signin confirmation,Verify signin and payment account information right now.,1
+https://wallet-update-example.test/confirm,Wallet update required,Confirm wallet payment details to avoid account restriction.,1
+http://payment-secure-example.click/verify,Payment failed urgent,Secure payment verification is required within one hour.,1
+https://account-help-example.xyz/login,Account help notice,Login and verify account recovery details immediately.,1
+http://secure-notice-example.top/update,Secure notice,Update password and confirm your identity to continue.,1
+https://verify-center-example.work/account,Verification center,Account verification and banking profile confirmation required.,1
+http://urgent-account-example.tk/confirm,Urgent account warning,Confirm your account now or access will be limited.,1
+https://login-review-example.gq/security,Login review needed,Review login security and verify password immediately.,1

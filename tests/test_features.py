@@ -21,3 +21,9 @@ def test_empty_url():
 def test_suspicious_words():
     features = extract_url_features("http://secure-login-verify.example.com")
     assert features["has_suspicious_words"] == 1
+
+def test_hybrid_url_features():
+    features = extract_url_features("http://secure-payment-example.xyz/login?token=123")
+    assert features["suspicious_keyword_count"] >= 2
+    assert features["suspicious_tld_flag"] == 1
+    assert features["count_percent"] == 0

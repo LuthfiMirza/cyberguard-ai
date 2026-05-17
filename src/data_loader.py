@@ -29,8 +29,16 @@ def load_dataset(path: str) -> pd.DataFrame:
     if missing:
         raise ValueError(f"Dataset must contain columns: {sorted(required)}. Missing: {sorted(missing)}")
 
-    df = df[["url", "label"]].dropna().drop_duplicates().copy()
+    columns = ["url", "label"]
+    if {"subject", "body"}.issubset(df.columns):
+        columns = ["url", "subject", "body", "label"]
+
+    df = df[columns].dropna(subset=["url", "label"]).drop_duplicates().copy()
     df["url"] = df["url"].astype(str).str.strip()
+    if "subject" in df.columns:
+        df["subject"] = df["subject"].fillna("").astype(str).str.strip()
+    if "body" in df.columns:
+        df["body"] = df["body"].fillna("").astype(str).str.strip()
     df = df[df["url"] != ""]
     df["label"] = df["label"].apply(normalize_label)
     return df.reset_index(drop=True)

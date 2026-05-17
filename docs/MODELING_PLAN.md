@@ -1,64 +1,32 @@
 # Modeling Plan
 
-## Baseline
+## Baseline MVP
 
-Mulai dari model sederhana:
+- Preprocessing numerik URL dengan `StandardScaler`.
+- Preprocessing email text dengan `TfidfVectorizer`.
+- Penggabungan fitur menggunakan `ColumnTransformer`.
+- Classifier default: `LogisticRegression`.
+- Classifier alternatif ringan: `RandomForestClassifier`.
 
-1. Logistic Regression
-2. Random Forest
-3. XGBoost
+## Evaluation
 
-## Pipeline
+Metrik utama:
 
-1. Load dataset.
-2. Ekstraksi fitur URL.
-3. Split data train-test dengan stratifikasi.
-4. Training baseline model.
-5. Evaluasi model.
-6. Pilih model terbaik berdasarkan recall, F1-score, dan ROC-AUC.
-7. Simpan model dengan Joblib.
+- Accuracy
+- Precision phishing
+- Recall phishing
+- F1 phishing
+- ROC-AUC jika tersedia
+- Confusion matrix
+- Classification report
 
-## Metrik Utama
+## Dataset Modes
 
-Untuk deteksi phishing, metrik paling penting adalah:
+- URL-only: `url,label`.
+- Hybrid email: `url,subject,body,label`.
 
-- Recall kelas phishing.
-- F1-score kelas phishing.
-- ROC-AUC.
+## Future Work
 
-False negative harus ditekan karena URL phishing yang diprediksi aman lebih berbahaya daripada URL aman yang salah ditandai mencurigakan.
-
-## Eksperimen
-
-### Eksperimen 1: Logistic Regression
-
-Tujuan: baseline cepat dan mudah dijelaskan.
-
-### Eksperimen 2: Random Forest
-
-Tujuan: menangkap pola non-linear dan melihat feature importance.
-
-### Eksperimen 3: XGBoost
-
-Tujuan: meningkatkan performa model dengan gradient boosting.
-
-## Output Training
-
-Simpan artefak berikut:
-
-- `models/cyberguard_model.joblib`
-- `reports/classification_report.txt`
-- `reports/confusion_matrix.png`
-- `reports/feature_importance.png`
-
-## Model Card Singkat
-
-Tuliskan:
-
-- Dataset yang digunakan.
-- Jumlah data.
-- Rasio kelas.
-- Model terbaik.
-- Metrik evaluasi.
-- Keterbatasan.
-- Penggunaan yang tidak diperbolehkan.
+- Domain age dan reputation API sebagai fitur opsional dari threat intelligence tepercaya.
+- Explainability dengan feature importance atau SHAP.
+- Batch prediction CSV.

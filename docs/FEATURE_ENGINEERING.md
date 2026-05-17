@@ -1,43 +1,35 @@
 # Feature Engineering
 
-CyberGuard AI versi awal menggunakan fitur lexical, yaitu fitur yang bisa dihitung dari teks URL tanpa mengakses website.
+CyberGuard AI menggunakan dua kelompok fitur: URL structural features dan email NLP features.
 
-## Fitur Dasar
+## URL Structural Features
 
-- `url_length`: panjang URL.
-- `hostname_length`: panjang hostname/domain.
-- `path_length`: panjang path.
-- `count_dots`: jumlah titik.
-- `count_hyphens`: jumlah tanda hubung.
-- `count_at`: jumlah karakter `@`.
-- `count_question`: jumlah `?`.
-- `count_equal`: jumlah `=`.
-- `count_slash`: jumlah `/`.
-- `count_digits`: jumlah angka.
-- `count_letters`: jumlah huruf.
-- `digit_ratio`: rasio angka terhadap panjang URL.
-- `has_https`: apakah URL menggunakan HTTPS.
-- `has_ip_address`: apakah hostname berupa IP address.
-- `has_suspicious_words`: apakah URL mengandung kata seperti login, verify, update, secure, account, bank, paypal.
+- `url_length`
+- `domain_length`
+- `path_length`
+- `count_dots`
+- `count_hyphens`
+- `count_at`
+- `count_question`
+- `count_equal`
+- `count_percent`
+- `count_digits`
+- `has_https`
+- `has_ip_address`
+- `subdomain_count`
+- `suspicious_keyword_count`
+- `suspicious_tld_flag`
 
-## Fitur Tambahan
+Keyword mencurigakan contoh: `login`, `verify`, `secure`, `account`, `update`, `banking`, `password`, `confirm`, `wallet`, `payment`.
 
-- `num_subdomains`: jumlah subdomain.
-- `tld_length`: panjang top-level domain.
-- `is_shortened_url`: indikasi URL shortener.
-- `entropy`: ukuran keacakan karakter URL.
+TLD mencurigakan contoh: `xyz`, `top`, `click`, `work`, `country`, `stream`, `gq`, `tk`, `ml`, `cf`.
 
-## Kenapa Fitur Ini Berguna?
+## Email NLP Features
 
-URL phishing sering memiliki pola seperti:
+Jika dataset memiliki `subject` dan `body`, keduanya digabung menjadi `email_text`, lalu diproses dengan `TfidfVectorizer`.
 
-- URL terlalu panjang.
-- Banyak angka atau simbol.
-- Banyak subdomain.
-- Mengandung kata pemancing seperti `login`, `verify`, `secure`, atau `update`.
-- Menggunakan domain yang terlihat mirip brand resmi.
-- Memakai IP address langsung.
+Jika kolom email tidak tersedia, pipeline tetap berjalan dengan fitur URL saja dan `email_text` kosong.
 
-## Catatan
+## Safety
 
-Fitur lexical cepat dan aman karena tidak perlu membuka URL. Namun fitur ini tidak sempurna. Untuk sistem produksi, perlu dikombinasikan dengan reputasi domain, threat intelligence, dan analisis konten halaman.
+Semua fitur diekstrak dari string input lokal. Sistem tidak membuka URL, tidak crawling, dan tidak melakukan request ke domain target.

@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import joblib
+
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
 
 import matplotlib
@@ -15,7 +16,7 @@ import seaborn as sns
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, f1_score, precision_score, recall_score, roc_auc_score
 
 from src.data_loader import load_dataset
-from src.features import build_feature_dataframe
+from src.features import build_model_input
 
 
 def safe_roc_auc(y, y_score) -> float:
@@ -47,13 +48,14 @@ def save_confusion_matrix(matrix, output_path: str) -> None:
 
 def evaluate(data_path: str, model_path: str, report_out: str = "reports/evaluation_report.txt") -> None:
     df = load_dataset(data_path)
-    X = build_feature_dataframe(df["url"])
+    X = build_model_input(df)
     y = df["label"]
 
     artifact = joblib.load(model_path)
     model = artifact["model"]
-    feature_columns = artifact["feature_columns"]
-    X = X[feature_columns]
+    input_columns = artifact.get("input_columns")
+    if input_columns:
+        X = X[input_columns]
 
     y_pred = model.predict(X)
     if hasattr(model, "predict_proba"):

@@ -27,6 +27,7 @@ reports/*.png
 reports/*.txt
 data/*.csv
 !data/sample_phishing_urls.csv
+!data/sample_phishing_emails.csv
 !data/.gitkeep
 !models/.gitkeep
 !reports/.gitkeep

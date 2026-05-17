@@ -1,45 +1,21 @@
 # Security Scope
 
-## Tujuan Aman
+CyberGuard AI adalah project defensive security dan edukasi.
 
-Proyek ini boleh digunakan untuk:
+## Allowed Use
 
-- edukasi machine learning,
-- deteksi dini URL phishing,
-- demo portofolio cybersecurity,
-- analisis dataset publik,
-- pembuatan dashboard prediksi defensif.
+- Pembelajaran machine learning untuk klasifikasi URL/email berisiko.
+- Analisis offline terhadap dataset yang sah.
+- Demo Streamlit untuk portofolio.
+- Evaluasi model dengan metrik standar.
 
-## Hal yang Tidak Boleh Dibangun
+## Not Allowed
 
-Jangan menambahkan fitur untuk:
+- Phishing, impersonation, atau credential theft.
+- Crawling, scraping, atau request ke URL target.
+- Exploit, active scanning, atau pengujian domain tanpa izin.
+- Penggunaan output model sebagai satu-satunya verdict keamanan final.
 
-- membuat halaman phishing,
-- mencuri kredensial,
-- mengirim email phishing,
-- bypass deteksi keamanan,
-- scraping target tanpa izin,
-- eksploitasi website,
-- automasi login ke layanan pihak ketiga.
+## Notes
 
-## Prinsip Desain
-
-- Jangan membuka URL input secara otomatis.
-- Jangan mengirim request ke domain yang tidak dikenal.
-- Gunakan dataset publik atau data yang kamu punya izin untuk analisis.
-- Beri disclaimer bahwa prediksi bukan keputusan final.
-
-## Bahasa Aman untuk Laporan
-
-Gunakan istilah:
-
-- deteksi awal,
-- prediksi risiko,
-- klasifikasi URL,
-- sistem pendukung keamanan.
-
-Hindari klaim:
-
-- 100% akurat,
-- menggantikan sistem keamanan profesional,
-- menjamin URL aman.
+Model membantu mengklasifikasikan risiko berdasarkan pola URL dan teks email. Untuk produksi, kombinasikan dengan review manusia, threat intelligence, sandboxing, dan kontrol keamanan organisasi.
