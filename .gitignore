@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment files
+.env
+.env.*
+
+# OS/editor
+.DS_Store
+.vscode/
+.idea/
+
+# Project artifacts
+models/*.joblib
+models/*.pkl
+reports/*.png
+reports/*.txt
+data/*.csv
+!data/sample_phishing_urls.csv
+!data/.gitkeep
+!models/.gitkeep
+!reports/.gitkeep
