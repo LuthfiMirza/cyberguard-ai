@@ -15,6 +15,16 @@ from src.data_loader import load_dataset
 from src.features import build_feature_dataframe
 
 
+def split_dataset(X, y):
+    try:
+        return train_test_split(
+            X, y, test_size=0.2, random_state=42, stratify=y
+        )
+    except ValueError as error:
+        print(f"Stratified split failed, falling back to regular split: {error}")
+        return train_test_split(X, y, test_size=0.2, random_state=42)
+
+
 def make_model(model_type: str):
     if model_type == "logistic_regression":
         return Pipeline([
@@ -48,15 +58,13 @@ def train(data_path: str, model_out: str, model_type: str) -> None:
     X = build_feature_dataframe(df["url"])
     y = df["label"]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+    X_train, X_test, y_train, y_test = split_dataset(X, y)
 
     model = make_model(model_type)
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
-    print(classification_report(y_test, y_pred, target_names=["benign", "phishing"]))
+    print(classification_report(y_test, y_pred, target_names=["benign", "phishing"], zero_division=0))
 
     artifact = {
         "model": model,
