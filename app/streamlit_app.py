@@ -120,7 +120,7 @@ with single_tab:
                 render_badge("benign" if result["prediction"] == 0 else "phishing")
                 st.write(f"**Risk score:** {risk_score:.2%}")
                 st.progress(min(max(risk_score, 0.0), 1.0))
-                st.write(f"**Risk level:** {result[risk_level]}")
+                st.write(f"**Risk level:** {result['risk_level']}")
 
                 features_df = pd.DataFrame([extract_url_features(url)]).T.reset_index()
                 features_df.columns = ["feature", "value"]

@@ -116,9 +116,9 @@ def main() -> None:
         parser.error("Either --url or --batch is required")
 
     result = predict_url(args.url, args.model, subject=args.subject, body=args.body)
-    print(f"predicted_label: {result[predicted_label]}")
-    print(f"risk_score: {result[risk_score]:.4f}")
-    print(f"risk_level: {result[risk_level]}")
+    print(f"predicted_label: {result['predicted_label']}")
+    print(f"risk_score: {result['risk_score']:.4f}")
+    print(f"risk_level: {result['risk_level']}")
 
 
 if __name__ == "__main__":
