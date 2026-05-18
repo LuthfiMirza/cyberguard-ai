@@ -26,9 +26,13 @@ models/*.pkl
 reports/*.png
 reports/*.txt
 reports/*.csv
+data/raw/
+data/processed/*
+!data/processed/
 data/*.csv
 !data/sample_phishing_urls.csv
 !data/sample_phishing_emails.csv
 !data/.gitkeep
+!data/processed/.gitkeep
 !models/.gitkeep
 !reports/.gitkeep

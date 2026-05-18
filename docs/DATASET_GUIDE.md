@@ -79,3 +79,49 @@ Untuk versi pertama, gunakan minimal:
 - 5.000 URL phishing/malicious
 
 Kalau dataset kecil, tetap bisa dipakai untuk demo, tetapi jelaskan keterbatasannya di laporan.
+
+## Dataset Nyata (Kaggle)
+
+CyberGuard AI dapat dilatih ulang dengan dataset Kaggle **Phishing Site URLs**.
+
+Download dataset:
+
+```bash
+kaggle datasets download taruntiwarihp/phishing-site-urls -p data/raw
+unzip data/raw/phishing-site-urls.zip -d data/raw/phishing-site-urls
+```
+
+Atau jika ingin langsung unzip via Kaggle CLI:
+
+```bash
+kaggle datasets download taruntiwarihp/phishing-site-urls -p data/raw --unzip
+```
+
+Raw file yang digunakan:
+
+```text
+data/raw/phishing-site-urls/phishing_site_urls.csv
+```
+
+Format raw dataset:
+
+```csv
+URL,Label
+example.com,good
+suspicious-login.example,bad
+```
+
+Mapping label:
+
+- `good` → `0` legitimate
+- `bad` → `1` phishing
+
+Jalankan preprocessing ke format pipeline CyberGuard AI:
+
+```bash
+python3 -m src.preprocess \
+  --input data/raw/phishing-site-urls/phishing_site_urls.csv \
+  --output data/processed/kaggle_phishing_urls.csv
+```
+
+Output processed tidak perlu di-commit ke git karena ukurannya besar dan dapat dibuat ulang dari raw dataset.

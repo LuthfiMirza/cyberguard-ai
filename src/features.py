@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from typing import Iterable, Optional
-from urllib.parse import urlparse
+from urllib.parse import ParseResult, urlparse
 
 import pandas as pd
 
@@ -28,7 +28,10 @@ def _safe_parse(url: str):
     if not raw_url:
         return raw_url, urlparse("")
     candidate = raw_url if "://" in raw_url else f"http://{raw_url}"
-    return raw_url, urlparse(candidate)
+    try:
+        return raw_url, urlparse(candidate)
+    except ValueError:
+        return raw_url, ParseResult(scheme="", netloc="", path=raw_url, params="", query="", fragment="")
 
 
 def _hostname_parts(hostname: str) -> list[str]:

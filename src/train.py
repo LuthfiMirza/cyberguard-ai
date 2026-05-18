@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime
 from pathlib import Path
+from typing import Optional
 
 import joblib
 import numpy as np
@@ -122,11 +123,28 @@ def get_feature_importance(model: Pipeline) -> list[tuple[str, float]]:
     return [(name, float(score)) for name, score in ranked[:10]]
 
 
-def train(data_path: str, model_out: str, model_type: str) -> None:
+def sample_dataset(df, sample: int):
+    if sample <= 0 or sample >= len(df):
+        return df
+    if df["label"].nunique() < 2:
+        return df.sample(n=sample, random_state=42)
+    return (
+        df.groupby("label", group_keys=False)
+        .apply(lambda group: group.sample(n=max(1, round(sample * len(group) / len(df))), random_state=42))
+        .sample(frac=1, random_state=42)
+        .head(sample)
+        .reset_index(drop=True)
+    )
+
+
+def train(data_path: str, model_out: str, model_type: str, sample: Optional[int] = None) -> None:
     model_type = normalize_model_type(model_type)
     print(f"Training model type: {model_type}")
 
     df = load_dataset(data_path)
+    if sample is not None and sample > 0 and sample < len(df):
+        df = sample_dataset(df, sample)
+        print(f"Using stratified sample: {len(df):,} rows")
     X = build_model_input(df)
     y = df["label"]
     numeric_columns = [column for column in X.columns if column != "email_text"]
@@ -169,8 +187,9 @@ def main() -> None:
         default="logreg",
         choices=["logreg", "logistic_regression", "rf", "random_forest", "xgboost"],
     )
+    parser.add_argument("--sample", type=int, help="Optional random sample size for large datasets")
     args = parser.parse_args()
-    train(args.data, args.model_out, args.model_type)
+    train(args.data, args.model_out, args.model_type, args.sample)
 
 
 if __name__ == "__main__":
