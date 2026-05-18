@@ -10,7 +10,7 @@ Proyek ini dibuat untuk tujuan **defensif**: edukasi keamanan siber dan portofol
 - Ekstraksi fitur struktural URL: panjang URL/domain/path, karakter khusus, IP address, subdomain, keyword, dan TLD mencurigakan
 - Analisis teks email menggunakan TF-IDF dari subject dan body
 - Hybrid ML pipeline berbasis scikit-learn
-- Model klasifikasi: Logistic Regression, Random Forest, dan XGBoost jika runtime tersedia
+- Model klasifikasi: Logistic Regression, Random Forest, dan XGBoost
 - Batch prediction dari CSV
 - SHAP explanation plots untuk interpretasi model jika dependency tersedia
 - Evaluasi: Accuracy, Precision, Recall, F1-score, ROC-AUC, Classification Report, dan Confusion Matrix
@@ -211,7 +211,7 @@ Test mencakup ekstraksi fitur URL, deteksi keyword mencurigakan, IP address, HTT
 - [x] Dashboard Streamlit
 - [x] Evaluation report dan confusion matrix
 - [x] Random Forest option
-- [x] XGBoost option dengan fallback runtime-safe
+- [x] XGBoost option dengan OpenMP runtime check
 - [x] SHAP feature explanation
 - [x] Batch prediction dari CSV
 - [ ] Model card

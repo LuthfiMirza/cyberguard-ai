@@ -65,25 +65,21 @@ def make_classifier(model_type: str, y=None):
     if model_type == "xgboost":
         try:
             from xgboost import XGBClassifier
-
-            return XGBClassifier(
-                n_estimators=200,
-                max_depth=6,
-                learning_rate=0.1,
-                use_label_encoder=False,
-                eval_metric="logloss",
-                scale_pos_weight=compute_scale_pos_weight(y),
-                random_state=42,
-                n_jobs=1,
-            )
         except Exception as error:
-            print(f"Warning: XGBoost is unavailable ({error}). Falling back to RandomForestClassifier.")
-            return RandomForestClassifier(
-                n_estimators=200,
-                random_state=42,
-                class_weight="balanced",
-                n_jobs=-1,
-            )
+            raise RuntimeError(
+                "XGBoost is unavailable. On macOS, install OpenMP with `brew install libomp` "
+                "then rerun training."
+            ) from error
+        return XGBClassifier(
+            n_estimators=200,
+            max_depth=6,
+            learning_rate=0.1,
+            use_label_encoder=False,
+            eval_metric="logloss",
+            scale_pos_weight=compute_scale_pos_weight(y),
+            random_state=42,
+            n_jobs=1,
+        )
     raise ValueError(f"Unsupported model type: {model_type}")
 
 

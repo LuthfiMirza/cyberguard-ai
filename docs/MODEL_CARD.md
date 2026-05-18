@@ -2,7 +2,7 @@
 
 ## Model Details
 
-- Model type: xgboost, with RandomForest fallback if XGBoost runtime is unavailable
+- Model type: xgboost
 - Training date: generated during the latest `src.train` run
 - Framework: scikit-learn / XGBoost
 
