@@ -1,4 +1,4 @@
-from src.features import extract_url_features
+from src.features import extract_url_features, get_typosquatting_features
 
 
 def test_https_url():
@@ -27,3 +27,18 @@ def test_hybrid_url_features():
     assert features["suspicious_keyword_count"] >= 2
     assert features["suspicious_tld_flag"] == 1
     assert features["count_percent"] == 0
+
+def test_typosquatting_detected():
+    feats = get_typosquatting_features("https://shoppee.co.id/login")
+    assert feats["is_typosquatting"] == 1
+    assert feats["min_brand_levenshtein"] == 1
+
+def test_legitimate_brand_not_flagged():
+    feats = get_typosquatting_features("https://shopee.co.id/login")
+    assert feats["exact_brand_match"] == 1
+    assert feats["is_typosquatting"] == 0
+
+def test_unrelated_domain_not_flagged():
+    feats = get_typosquatting_features("https://randomxyz123.com")
+    assert feats["is_typosquatting"] == 0
+    assert feats["exact_brand_match"] == 0

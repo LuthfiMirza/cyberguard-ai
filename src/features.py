@@ -6,6 +6,15 @@ from urllib.parse import ParseResult, urlparse
 
 import pandas as pd
 
+from src.brands import TOP_BRANDS
+
+try:
+    import Levenshtein
+    import tldextract
+except ImportError:
+    Levenshtein = None
+    tldextract = None
+
 SUSPICIOUS_KEYWORDS = [
     "login",
     "verify",
@@ -36,6 +45,47 @@ def _safe_parse(url: str):
 
 def _hostname_parts(hostname: str) -> list[str]:
     return [part for part in hostname.split(".") if part]
+
+def extract_sld(url: str) -> str:
+    raw_url, parsed = _safe_parse(url)
+    hostname = parsed.hostname or ""
+    target = raw_url if "://" in raw_url else f"http://{raw_url}"
+    if tldextract is not None:
+        try:
+            extracted = tldextract.extract(target)
+            return (extracted.domain or "").lower()
+        except Exception:
+            pass
+
+    parts = _hostname_parts(hostname)
+    if len(parts) >= 2 and parts[-2] in {"co", "ac", "go", "or", "web", "net"} and len(parts[-1]) == 2:
+        return parts[-3].lower() if len(parts) >= 3 else ""
+    return parts[-2].lower() if len(parts) >= 2 else (parts[0].lower() if parts else "")
+
+def get_typosquatting_features(url: str) -> dict[str, float | int]:
+    default_features = {
+        "min_brand_levenshtein": 0,
+        "is_typosquatting": 0,
+        "exact_brand_match": 0,
+        "brand_impersonation_score": 0.0,
+    }
+    if Levenshtein is None:
+        return default_features
+
+    domain = extract_sld(url)
+    if not domain:
+        return default_features
+
+    distances = [Levenshtein.distance(domain, brand) for brand in TOP_BRANDS]
+    min_distance = min(distances) if distances else 0
+    exact_brand_match = int(min_distance == 0 and domain in TOP_BRANDS)
+    is_typosquatting = int(1 <= min_distance <= 2)
+    return {
+        "min_brand_levenshtein": int(min_distance),
+        "is_typosquatting": is_typosquatting,
+        "exact_brand_match": exact_brand_match,
+        "brand_impersonation_score": 1.0 / (min_distance + 1),
+    }
 
 
 def extract_url_features(url: str) -> dict[str, float | int]:
@@ -75,6 +125,7 @@ def extract_url_features(url: str) -> dict[str, float | int]:
         "has_suspicious_words": int(suspicious_keyword_count > 0),
         "suspicious_tld_flag": int(tld in SUSPICIOUS_TLDS),
     }
+    features.update(get_typosquatting_features(url))
     return features
 
 

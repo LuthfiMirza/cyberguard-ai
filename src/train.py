@@ -7,6 +7,7 @@ from typing import Optional
 
 import joblib
 import numpy as np
+import pandas as pd
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -17,6 +18,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from src.data_loader import load_dataset
+from src.brands import TOP_BRANDS
 from src.features import build_model_input
 
 MODEL_ALIASES = {
@@ -137,11 +139,41 @@ def sample_dataset(df, sample: int):
     )
 
 
-def train(data_path: str, model_out: str, model_type: str, sample: Optional[int] = None) -> None:
+def typo_variant(brand: str) -> str:
+    if len(brand) < 2:
+        return f"{brand}x"
+    return f"{brand[:-1]}{brand[-1]}{brand[-1]}"
+
+
+def build_brand_training_examples() -> pd.DataFrame:
+    rows = []
+    for brand in TOP_BRANDS:
+        rows.extend([
+            {"url": f"https://{brand}.com", "label": 0},
+            {"url": f"https://{brand}.co.id", "label": 0},
+            {"url": f"https://www.{brand}.com/login", "label": 0},
+            {"url": f"https://{typo_variant(brand)}.com/login", "label": 1},
+            {"url": f"https://{typo_variant(brand)}.co.id/login", "label": 1},
+            {"url": f"http://secure-{typo_variant(brand)}.com/verify-account", "label": 1},
+        ])
+    return pd.DataFrame(rows)
+
+
+def augment_with_brand_examples(df: pd.DataFrame) -> pd.DataFrame:
+    examples = build_brand_training_examples()
+    augmented = pd.concat([df, examples], ignore_index=True)
+    return augmented.drop_duplicates(subset=["url"]).reset_index(drop=True)
+
+
+def train(data_path: str, model_out: str, model_type: str, sample: Optional[int] = None, no_brand_augmentation: bool = False) -> None:
     model_type = normalize_model_type(model_type)
     print(f"Training model type: {model_type}")
 
     df = load_dataset(data_path)
+    if not no_brand_augmentation:
+        before_rows = len(df)
+        df = augment_with_brand_examples(df)
+        print(f"Added brand typo training examples: {len(df) - before_rows:,} rows")
     if sample is not None and sample > 0 and sample < len(df):
         df = sample_dataset(df, sample)
         print(f"Using stratified sample: {len(df):,} rows")
@@ -188,8 +220,9 @@ def main() -> None:
         choices=["logreg", "logistic_regression", "rf", "random_forest", "xgboost"],
     )
     parser.add_argument("--sample", type=int, help="Optional random sample size for large datasets")
+    parser.add_argument("--no-brand-augmentation", action="store_true", help="Disable synthetic brand typo training examples")
     args = parser.parse_args()
-    train(args.data, args.model_out, args.model_type, args.sample)
+    train(args.data, args.model_out, args.model_type, args.sample, args.no_brand_augmentation)
 
 
 if __name__ == "__main__":
