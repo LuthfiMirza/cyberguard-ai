@@ -10,14 +10,20 @@ import streamlit as st
 
 from src.features import extract_url_features
 from src.predict import predict_batch, predict_url
+from src.train import train
 
 DEFAULT_MODEL_PATH = "models/cyberguard_model.joblib"
+DEFAULT_SAMPLE_DATASET = "data/sample_phishing_emails.csv"
 
 st.set_page_config(page_title="CyberGuard AI", page_icon="🛡️", layout="wide")
 
 
-def load_artifact(model_path: str):
-    if not Path(model_path).exists():
+@st.cache_resource(show_spinner="Preparing demo model...")
+def ensure_demo_model(model_path: str):
+    model_file = Path(model_path)
+    if not model_file.exists() and Path(DEFAULT_SAMPLE_DATASET).exists():
+        train(DEFAULT_SAMPLE_DATASET, model_path, "logreg")
+    if not model_file.exists():
         return None
     return joblib.load(model_path)
 
@@ -78,7 +84,7 @@ st.warning(
 )
 
 model_path = st.sidebar.text_input("Model path", value=DEFAULT_MODEL_PATH)
-artifact = load_artifact(model_path)
+artifact = ensure_demo_model(model_path)
 st.sidebar.subheader("Model Info")
 for key, value in get_model_info(model_path, artifact).items():
     st.sidebar.write(f"**{key}:** {value}")
