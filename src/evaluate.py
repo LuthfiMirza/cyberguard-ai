@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 
 import joblib
+import numpy as np
 
 os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib")
 
@@ -46,7 +47,80 @@ def save_confusion_matrix(matrix, output_path: str) -> None:
     plt.close()
 
 
-def evaluate(data_path: str, model_path: str, report_out: str = "reports/evaluation_report.txt") -> None:
+def get_transformed_matrix(model, X):
+    transformed = model.named_steps["preprocessor"].transform(X)
+    if hasattr(transformed, "toarray"):
+        return transformed.toarray()
+    return np.asarray(transformed)
+
+
+def get_feature_names(artifact: dict, model) -> list[str]:
+    if artifact.get("feature_names"):
+        return artifact["feature_names"]
+    try:
+        names = model.named_steps["preprocessor"].get_feature_names_out()
+        return [name.replace("url_features__", "").replace("email_tfidf__", "email:") for name in names]
+    except Exception:
+        return []
+
+
+def save_shap_plots(artifact: dict, X, output_dir: str = "reports") -> None:
+    try:
+        import shap
+    except ImportError:
+        print("Warning: SHAP is not installed. Skipping SHAP plots.")
+        return
+
+    model = artifact["model"]
+    classifier = model.named_steps["model"]
+    feature_names = get_feature_names(artifact, model)
+    if not feature_names:
+        print("Warning: feature names unavailable. Skipping SHAP plots.")
+        return
+
+    try:
+        X_transformed = get_transformed_matrix(model, X)
+        sample_size = min(len(X_transformed), 100)
+        X_sample = X_transformed[:sample_size]
+        model_type = artifact.get("model_type", "")
+
+        if model_type == "logreg" or hasattr(classifier, "coef_"):
+            explainer = shap.LinearExplainer(classifier, X_sample)
+        elif hasattr(classifier, "feature_importances_"):
+            explainer = shap.TreeExplainer(classifier)
+        else:
+            print("Warning: model type is not supported for SHAP plots. Skipping.")
+            return
+
+        shap_values = explainer.shap_values(X_sample)
+        if isinstance(shap_values, list):
+            shap_values = shap_values[-1]
+        if getattr(shap_values, "ndim", 0) == 3:
+            shap_values = shap_values[:, :, -1]
+
+        Path(output_dir).mkdir(parents=True, exist_ok=True)
+        summary_out = Path(output_dir) / "shap_summary.png"
+        beeswarm_out = Path(output_dir) / "shap_beeswarm.png"
+
+        plt.figure()
+        shap.summary_plot(shap_values, X_sample, feature_names=feature_names, plot_type="bar", max_display=15, show=False)
+        plt.tight_layout()
+        plt.savefig(summary_out, bbox_inches="tight")
+        plt.close()
+
+        plt.figure()
+        shap.summary_plot(shap_values, X_sample, feature_names=feature_names, max_display=15, show=False)
+        plt.tight_layout()
+        plt.savefig(beeswarm_out, bbox_inches="tight")
+        plt.close()
+
+        print(f"Saved SHAP summary to {summary_out}")
+        print(f"Saved SHAP beeswarm to {beeswarm_out}")
+    except Exception as error:
+        print(f"Warning: SHAP plot generation failed: {error}")
+
+
+def evaluate(data_path: str, model_path: str, report_out: str = "reports/evaluation_report.txt", no_shap: bool = False) -> None:
     df = load_dataset(data_path)
     X = build_model_input(df)
     y = df["label"]
@@ -97,14 +171,18 @@ def evaluate(data_path: str, model_path: str, report_out: str = "reports/evaluat
     print(f"Saved report to {report_out}")
     print(f"Saved confusion matrix to {matrix_out}")
 
+    if not no_shap:
+        save_shap_plots(artifact, X, str(Path(report_out).parent))
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Evaluate CyberGuard AI model")
     parser.add_argument("--data", required=True)
     parser.add_argument("--model", required=True)
     parser.add_argument("--report-out", default="reports/evaluation_report.txt")
+    parser.add_argument("--no-shap", action="store_true", help="Skip SHAP explanation plots")
     args = parser.parse_args()
-    evaluate(args.data, args.model, args.report_out)
+    evaluate(args.data, args.model, args.report_out, args.no_shap)
 
 
 if __name__ == "__main__":

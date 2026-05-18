@@ -1,31 +1,79 @@
 # CyberGuard AI
 
-**CyberGuard AI** adalah sistem machine learning defensif untuk membantu mengklasifikasikan URL dan email yang berisiko phishing. Sistem menggunakan fitur struktural dari URL serta fitur NLP dari teks email seperti subject dan body.
+Sistem deteksi phishing berbasis machine learning yang membantu mengklasifikasikan URL dan konten email sebagai legitimate atau berisiko phishing.
 
-> Project ini tidak melakukan crawling, scraping, eksploitasi, active scanning, atau request ke URL target. Fokusnya adalah edukasi, defensive security, dan portofolio machine learning.
+Proyek ini dibuat untuk tujuan **defensif**: edukasi keamanan siber dan portofolio machine learning. Tidak ada fitur ofensif, crawling, scraping, request ke URL target, atau eksploitasi sistem.
 
-## Problem Statement
+## Fitur Utama
 
-Bagaimana membangun model machine learning yang dapat membantu mengklasifikasikan pesan atau URL sebagai legitimate atau phishing berdasarkan fitur struktural URL dan pola bahasa pada email?
+- Deteksi phishing dari URL saja, atau kombinasi URL + subject + body email
+- Ekstraksi fitur struktural URL: panjang URL/domain/path, karakter khusus, IP address, subdomain, keyword, dan TLD mencurigakan
+- Analisis teks email menggunakan TF-IDF dari subject dan body
+- Hybrid ML pipeline berbasis scikit-learn
+- Model klasifikasi: Logistic Regression, Random Forest, dan XGBoost jika runtime tersedia
+- Batch prediction dari CSV
+- SHAP explanation plots untuk interpretasi model jika dependency tersedia
+- Evaluasi: Accuracy, Precision, Recall, F1-score, ROC-AUC, Classification Report, dan Confusion Matrix
+- Dashboard interaktif via Streamlit
 
-Target klasifikasi:
+## Struktur Proyek
 
-- `0`: benign / legitimate
-- `1`: phishing / suspicious
+```text
+cyberguard-ai/
+├── app/
+│   └── streamlit_app.py        # Dashboard Streamlit
+├── data/
+│   ├── sample_phishing_urls.csv
+│   └── sample_phishing_emails.csv
+├── docs/
+│   ├── DATASET_GUIDE.md
+│   ├── FEATURE_ENGINEERING.md
+│   ├── MODELING_PLAN.md
+│   ├── PROJECT_SPEC.md
+│   └── SECURITY_SCOPE.md
+├── models/                     # Model tersimpan, di-ignore git
+├── notebooks/
+│   └── 01_exploration.ipynb
+├── reports/                    # Output evaluasi, di-ignore git
+├── src/
+│   ├── config.py
+│   ├── data_loader.py
+│   ├── evaluate.py
+│   ├── features.py
+│   ├── predict.py
+│   └── train.py
+├── tests/
+│   └── test_features.py
+├── .gitignore
+├── requirements.txt
+└── README.md
+```
 
-## Key Features
+## Setup
 
-- URL structural feature extraction
-- Email text classification dengan TF-IDF
-- Hybrid ML pipeline untuk URL-only atau URL + email
-- Risk score dan risk level
-- Streamlit dashboard
-- Defensive-only security scope
-- Evaluation report dan confusion matrix
+Buat virtual environment:
 
-## Dataset Format
+```bash
+python3 -m venv .venv
+```
 
-CyberGuard AI mendukung dua format dataset.
+Aktifkan virtual environment:
+
+```bash
+# macOS / Linux
+source .venv/bin/activate
+
+# Windows
+.venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Format Dataset
 
 URL-only:
 
@@ -39,90 +87,93 @@ URL + email:
 
 ```csv
 url,subject,body,label
-https://example.com,Your order receipt,Thank you for your purchase,0
+https://example.com,Welcome,Hello there,0
 http://verify-account-example.net,Account suspended,Verify your account immediately,1
 ```
 
-Sample dataset tersedia di:
+Kolom `label` menggunakan format:
 
-- `data/sample_phishing_urls.csv`
-- `data/sample_phishing_emails.csv`
+- `0`: benign / legitimate
+- `1`: phishing / suspicious
 
-## Install
+Sample dataset tersedia di `data/sample_phishing_urls.csv` dan `data/sample_phishing_emails.csv`. Detail format ada di `docs/DATASET_GUIDE.md`.
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-```
+## Cara Penggunaan
 
-Windows:
-
-```bash
-.venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-## Run Tests
-
-```bash
-python3 -m pytest -q
-```
-
-## Training
-
-Train dengan sample URL + email:
-
-```bash
-python3 -m src.train --data data/sample_phishing_emails.csv --model-out models/cyberguard_model.joblib
-```
-
-Train dengan dataset URL-only:
+Training dengan dataset URL-only:
 
 ```bash
 python3 -m src.train --data data/sample_phishing_urls.csv --model-out models/cyberguard_model.joblib
 ```
 
-Model default menggunakan `LogisticRegression` dengan gabungan fitur numerik URL dan TF-IDF email. `RandomForest` tersedia lewat `--model-type random_forest`.
+Training dengan dataset hybrid URL + email:
 
-## Evaluation
+```bash
+python3 -m src.train --data data/sample_phishing_emails.csv --model-out models/cyberguard_model.joblib
+```
+
+Training dengan XGBoost:
+
+```bash
+python3 -m src.train --data data/sample_phishing_emails.csv --model-out models/cyberguard_model.joblib --model-type xgboost
+```
+
+Evaluasi model:
 
 ```bash
 python3 -m src.evaluate --data data/sample_phishing_emails.csv --model models/cyberguard_model.joblib
 ```
 
-Output evaluasi:
+Prediksi satu URL:
 
-- `reports/evaluation_report.txt`
-- `reports/confusion_matrix.png`
+```bash
+python3 -m src.predict --url "http://secure-login-example.net/verify"
+```
 
-## Streamlit Dashboard
+Prediksi URL + email:
+
+```bash
+python3 -m src.predict \
+  --url "http://verify-account-example.net" \
+  --subject "Account suspended" \
+  --body "Verify your account immediately to restore access"
+```
+
+Batch prediction dari CSV:
+
+```bash
+python3 -m src.predict --batch data/sample_phishing_urls.csv
+```
+
+Jalankan dashboard:
 
 ```bash
 streamlit run app/streamlit_app.py
 ```
 
-Jika command `streamlit` belum ada di PATH, gunakan:
+Jika `streamlit` belum tersedia di PATH:
 
 ```bash
 python3 -m streamlit run app/streamlit_app.py
 ```
 
-Dashboard menerima input:
+## Contoh Input
 
-- URL
-- email subject (opsional)
-- email body (opsional)
-
-## Example Prediction Input
+Aman:
 
 ```text
-URL: http://secure-login-example.net/verify-account
-Subject: Account suspended
-Body: Verify your account immediately to avoid access restriction.
+https://www.example.com
+https://docs.example.com/getting-started
 ```
 
-Contoh output:
+Mencurigakan:
+
+```text
+http://secure-login-example.net/verify-account
+http://192.168.1.1/banking/verify?token=abc123
+```
+
+Contoh output prediksi:
 
 ```text
 predicted_label: phishing/malicious
@@ -130,29 +181,42 @@ risk_score: 0.87
 risk_level: high
 ```
 
-Nilai tersebut adalah skor bantuan klasifikasi, bukan verdict keamanan final.
+Output adalah skor bantuan klasifikasi, bukan verdict keamanan final.
 
-## Repository Structure
+## Metrik Evaluasi
 
-```text
-cyberguard-ai/
-├── app/                  # Streamlit dashboard
-├── data/                 # Sample datasets
-├── docs/                 # Project documentation
-├── models/               # Generated model artifacts
-├── notebooks/            # Exploration notebook
-├── prompts/              # Codex prompts
-├── reports/              # Generated evaluation reports
-├── src/                  # ML pipeline source code
-├── tests/                # Unit tests
-├── requirements.txt
-└── README.md
+| Metrik | Keterangan |
+|---|---|
+| Accuracy | Proporsi prediksi benar secara keseluruhan |
+| Precision | Dari yang diprediksi phishing, berapa yang benar |
+| Recall | Dari semua phishing nyata, berapa yang berhasil diklasifikasikan |
+| F1-score | Harmonic mean precision dan recall |
+| ROC-AUC | Kemampuan model membedakan dua kelas jika probabilitas tersedia |
+| Confusion Matrix | Ringkasan benar/salah untuk tiap kelas |
+
+Recall untuk kelas phishing penting karena false negative, yaitu phishing yang diklasifikasikan aman, dapat lebih berisiko daripada false positive.
+
+## Tests
+
+```bash
+python3 -m pytest -q
 ```
 
-## Dependencies Note
+Test mencakup ekstraksi fitur URL, deteksi keyword mencurigakan, IP address, HTTPS, input kosong, dan TLD mencurigakan.
 
-Core MVP menggunakan `pandas`, `scikit-learn`, `matplotlib`, `seaborn`, `joblib`, dan `streamlit`. Dependency seperti `xgboost` dan `shap` bersifat opsional untuk eksperimen lanjutan, bukan requirement utama pipeline hybrid saat ini.
+## Roadmap
 
-## Security Scope
+- [x] Baseline Logistic Regression
+- [x] Pipeline hybrid URL + email NLP
+- [x] Dashboard Streamlit
+- [x] Evaluation report dan confusion matrix
+- [x] Random Forest option
+- [x] XGBoost option dengan fallback runtime-safe
+- [x] SHAP feature explanation
+- [x] Batch prediction dari CSV
+- [ ] Model card
+- [ ] Screenshot dashboard untuk README
 
-CyberGuard AI hanya untuk defensive security dan edukasi. Project ini tidak boleh digunakan untuk phishing, impersonation, credential theft, eksploitasi, atau pengujian aktif terhadap target tanpa izin. Domain age, WHOIS, dan reputation API dapat ditambahkan sebagai future work menggunakan sumber threat intelligence tepercaya.
+## Disclaimer
+
+CyberGuard AI adalah alat bantu pembelajaran dan deteksi awal. Hasil prediksi tidak boleh dijadikan satu-satunya dasar keputusan keamanan. Untuk penggunaan produksi, kombinasikan dengan threat intelligence feed, sandboxing, reputasi domain, dan validasi pakar keamanan.

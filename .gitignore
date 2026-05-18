@@ -25,6 +25,7 @@ models/*.joblib
 models/*.pkl
 reports/*.png
 reports/*.txt
+reports/*.csv
 data/*.csv
 !data/sample_phishing_urls.csv
 !data/sample_phishing_emails.csv
