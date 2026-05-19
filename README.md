@@ -47,11 +47,9 @@ Dashboard Streamlit menyediakan dua mode analisis:
 - **Analisis URL** untuk mengecek satu URL dan opsional subject/body email.
 - **Analisis Batch** untuk upload CSV berisi banyak URL.
 
-> Screenshot dashboard dapat ditambahkan ke `docs/assets/dashboard-preview.png`, lalu ditampilkan di README dengan:
->
-> ```markdown
-> ![CyberGuard AI Dashboard](docs/assets/dashboard-preview.png)
-> ```
+![CyberGuard AI Dashboard](docs/assets/dashboard-preview.png)
+
+Contoh pada screenshot menggunakan `https://shoppee.co.id/login` dan menghasilkan **PHISHING TERDETEKSI** dengan risk score tinggi.
 
 Contoh input untuk demo:
 
