@@ -25,107 +25,10 @@ st.set_page_config(page_title="CyberGuard AI", page_icon="🛡️", layout="wide
 st.markdown(
     """
 <style>
-  .stApp {
-    background-color: #0D1117;
-    color: #E6EDF3;
-  }
-
-  section[data-testid="stSidebar"] {
-    background-color: #161B22;
-    border-right: 1px solid #30363D;
-  }
-
-  .stTextInput > div > div > input,
-  .stTextArea > div > div > textarea {
-    background-color: #161B22;
-    color: #E6EDF3;
-    border: 1px solid #30363D;
-    border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  .stTextInput > div > div > input:focus,
-  .stTextArea > div > div > textarea:focus {
-    border-color: #00FFA3;
-    box-shadow: 0 0 0 2px rgba(0, 255, 163, 0.15);
-  }
-
-  .stButton > button {
-    background: linear-gradient(135deg, #00FFA3, #00C77A);
-    color: #0D1117;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    padding: 0.6rem 1.4rem;
-    font-size: 0.95rem;
-    letter-spacing: 0.02em;
-    transition: all 0.2s ease;
-  }
-
-  .stButton > button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 20px rgba(0, 255, 163, 0.35);
-  }
-
-  .stTabs [data-baseweb="tab-list"] {
-    background-color: #161B22;
-    border-radius: 8px;
-    padding: 4px;
-    border: 1px solid #30363D;
-  }
-
-  .stTabs [data-baseweb="tab"] {
-    color: #8B949E;
-    border-radius: 6px;
-    font-weight: 500;
-  }
-
-  .stTabs [aria-selected="true"] {
-    background-color: #0D1117;
-    color: #00FFA3;
-  }
-
-  .stDataFrame {
-    border: 1px solid #30363D;
-    border-radius: 8px;
-  }
-
-  [data-testid="stMetric"] {
-    background-color: #161B22;
-    border: 1px solid #30363D;
-    border-radius: 8px;
-    padding: 1rem;
-  }
-
-  .stCaption, caption, small {
-    color: #8B949E;
-  }
-
-  .streamlit-expanderHeader {
-    background-color: #161B22;
-    border: 1px solid #30363D;
-    border-radius: 8px;
-    color: #8B949E;
-  }
-
-  .stProgress > div > div {
-    background: linear-gradient(90deg, #00FFA3, #58A6FF);
-    border-radius: 999px;
-  }
-
-  hr {
-    border-color: #30363D;
-  }
-
-  [data-testid="stFileUploader"] {
-    background-color: #161B22;
-    border: 1px dashed #30363D;
-    border-radius: 8px;
-  }
-
-  label, .stMarkdown, .stTextInput label, .stTextArea label {
-    color: #E6EDF3 !important;
-  }
+  .block-container { padding-top: 2rem; }
+  .stButton > button { border-radius: 8px; font-weight: 600; }
+  .stTextInput > div > div > input { border-radius: 8px; }
+  .stTabs [data-baseweb="tab-list"] { gap: 4px; }
 </style>
 """,
     unsafe_allow_html=True,
@@ -145,12 +48,12 @@ def ensure_demo_model(model_path: str):
 def get_model_info(model_path: str, artifact: Optional[dict]) -> dict[str, str | int]:
     path = Path(model_path)
     if artifact is None or not path.exists():
-        return {"Tipe Model": "not loaded", "Tanggal Training": "n/a", "Jumlah Fitur": 0}
+        return {"Tipe model": "not loaded", "Tanggal training": "n/a", "Jumlah fitur": 0}
     mtime = datetime.fromtimestamp(path.stat().st_mtime).strftime("%Y-%m-%d %H:%M:%S")
     return {
-        "Tipe Model": artifact.get("model_type", "unknown"),
-        "Tanggal Training": artifact.get("training_date", mtime),
-        "Jumlah Fitur": len(artifact.get("feature_names", [])),
+        "Tipe model": artifact.get("model_type", "unknown"),
+        "Tanggal training": artifact.get("training_date", mtime),
+        "Jumlah fitur": len(artifact.get("feature_names", [])),
     }
 
 
@@ -179,14 +82,18 @@ def section_header(icon: str, title: str) -> None:
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 1.5rem 0 0.75rem 0;
+  margin: 1.25rem 0 0.75rem 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid #30363D;
+  border-bottom: 1px solid #D0D7DE;
 ">
-  <span style="color: #00FFA3;">{icon}</span>
-  <span style="font-weight: 600; color: #E6EDF3; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 0.05em;">
-    {title}
-  </span>
+  <span>{icon}</span>
+  <span style="
+    font-weight: 600;
+    color: #1F2328;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  ">{title}</span>
 </div>
 """,
         unsafe_allow_html=True,
@@ -198,17 +105,15 @@ def result_card(prediction: int) -> None:
         st.markdown(
             """
 <div style="
-  background: rgba(0, 255, 163, 0.08);
-  border: 1px solid rgba(0, 255, 163, 0.3);
-  border-left: 4px solid #00FFA3;
+  background: #DAFBE1;
+  border: 1px solid #82E09A;
+  border-left: 4px solid #2DA44E;
   border-radius: 8px;
-  padding: 1.2rem 1.5rem;
+  padding: 1rem 1.25rem;
   margin-bottom: 1rem;
 ">
-  <div style="font-size: 1.4rem; font-weight: 800; color: #00FFA3; letter-spacing: 0.05em;">
-    ✅ AMAN
-  </div>
-  <div style="color: #8B949E; font-size: 0.875rem; margin-top: 4px;">
+  <div style="font-size: 1.25rem; font-weight: 800; color: #116329; letter-spacing: 0.02em;">✅ AMAN</div>
+  <div style="color: #1A7F37; font-size: 0.85rem; margin-top: 4px;">
     Pola URL tidak menunjukkan tanda-tanda phishing yang signifikan.
   </div>
 </div>
@@ -219,17 +124,15 @@ def result_card(prediction: int) -> None:
         st.markdown(
             """
 <div style="
-  background: rgba(255, 68, 68, 0.08);
-  border: 1px solid rgba(255, 68, 68, 0.3);
-  border-left: 4px solid #FF4444;
+  background: #FFEBE9;
+  border: 1px solid #FFABA8;
+  border-left: 4px solid #CF222E;
   border-radius: 8px;
-  padding: 1.2rem 1.5rem;
+  padding: 1rem 1.25rem;
   margin-bottom: 1rem;
 ">
-  <div style="font-size: 1.4rem; font-weight: 800; color: #FF4444; letter-spacing: 0.05em;">
-    🚨 PHISHING TERDETEKSI
-  </div>
-  <div style="color: #8B949E; font-size: 0.875rem; margin-top: 4px;">
+  <div style="font-size: 1.25rem; font-weight: 800; color: #82071E; letter-spacing: 0.02em;">🚨 PHISHING TERDETEKSI</div>
+  <div style="color: #CF222E; font-size: 0.85rem; margin-top: 4px;">
     URL ini memiliki pola yang mirip dengan data phishing. Berhati-hatilah.
   </div>
 </div>
@@ -238,39 +141,24 @@ def result_card(prediction: int) -> None:
         )
 
 
-def risk_score_card(risk_score: float, prediction: int) -> None:
-    color = "#00FFA3" if prediction == 0 else "#FF4444"
-    width = min(max(risk_score * 100, 0), 100)
+def risk_score_card(risk_score: float, prediction: int, risk_level: str) -> None:
+    score_color = "#2DA44E" if prediction == 0 else "#CF222E"
+    bar_width = min(max(risk_score * 100, 0), 100)
     st.markdown(
         f"""
 <div style="
-  background: #161B22;
-  border: 1px solid #30363D;
+  background: #F6F8FA;
+  border: 1px solid #D0D7DE;
   border-radius: 8px;
-  padding: 1.2rem 1.5rem;
+  padding: 1.25rem 1.5rem;
   margin-bottom: 1rem;
 ">
-  <div style="color: #8B949E; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">
-    Risk Score
+  <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #656D76; margin-bottom: 6px; font-weight: 600;">Risk Score</div>
+  <div style="font-size: 2.25rem; font-weight: 800; color: {score_color}; font-family: monospace; line-height: 1;">{risk_score:.1%}</div>
+  <div style="height: 6px; background: #D0D7DE; border-radius: 999px; margin-top: 12px; overflow: hidden;">
+    <div style="height: 100%; width: {bar_width:.1f}%; background: {score_color}; border-radius: 999px;"></div>
   </div>
-  <div style="font-size: 2.5rem; font-weight: 800; color: {color}; font-family: monospace;">
-    {risk_score:.1%}
-  </div>
-  <div style="
-    height: 6px;
-    background: #30363D;
-    border-radius: 999px;
-    margin-top: 12px;
-    overflow: hidden;
-  ">
-    <div style="
-      height: 100%;
-      width: {width:.1f}%;
-      background: linear-gradient(90deg, {color}, {color}88);
-      border-radius: 999px;
-      transition: width 0.5s ease;
-    "></div>
-  </div>
+  <div style="margin-top: 8px; font-size: 0.8rem; color: #656D76;">Risk level: <strong style="color: {score_color};">{risk_level}</strong></div>
 </div>
 """,
         unsafe_allow_html=True,
@@ -281,32 +169,18 @@ def empty_state() -> None:
     st.markdown(
         """
 <div style="
-  background: #161B22;
-  border: 1px dashed #30363D;
+  background: #F6F8FA;
+  border: 1px dashed #D0D7DE;
   border-radius: 12px;
   padding: 3rem 2rem;
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
 ">
-  <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
-  <div style="color: #E6EDF3; font-weight: 600; margin-bottom: 8px;">
-    Siap menganalisis URL
+  <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">🔍</div>
+  <div style="color: #1F2328; font-weight: 600; margin-bottom: 6px; font-size: 0.95rem;">Siap menganalisis URL</div>
+  <div style="color: #656D76; font-size: 0.85rem;">
+    Masukkan URL di sebelah kiri, lalu klik <strong style="color: #2DA44E;">Analisis Sekarang</strong>
   </div>
-  <div style="color: #8B949E; font-size: 0.875rem;">
-    Masukkan URL di sebelah kiri, lalu klik <strong style="color: #00FFA3;">Analisis Sekarang</strong>
-  </div>
-</div>
-""",
-        unsafe_allow_html=True,
-    )
-
-
-def sidebar_info_item(label: str, value: str | int) -> None:
-    st.sidebar.markdown(
-        f"""
-<div style="margin-bottom: 0.75rem;">
-  <div style="font-size: 0.75rem; color: #8B949E; margin-bottom: 2px;">{label}</div>
-  <div style="font-family: monospace; color: #00FFA3; font-weight: 600;">{value}</div>
 </div>
 """,
         unsafe_allow_html=True,
@@ -315,20 +189,12 @@ def sidebar_info_item(label: str, value: str | int) -> None:
 
 st.markdown(
     """
-<div style="padding: 2rem 0 1rem 0;">
-  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-    <span style="font-size: 2.5rem;">🛡️</span>
-    <h1 style="
-      margin: 0;
-      font-size: 2.2rem;
-      font-weight: 800;
-      background: linear-gradient(135deg, #00FFA3, #58A6FF);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: -0.02em;
-    ">CyberGuard AI</h1>
+<div style="padding: 1.5rem 0 1rem 0;">
+  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+    <span style="font-size: 2rem;">🛡️</span>
+    <h1 style="margin: 0; font-size: 2rem; font-weight: 800; color: #1F2328; letter-spacing: -0.02em;">CyberGuard AI</h1>
   </div>
-  <p style="color: #8B949E; margin: 0; font-size: 0.95rem;">
+  <p style="color: #656D76; margin: 0; font-size: 0.9rem;">
     Deteksi phishing dari pola URL dan konten email — tanpa membuka atau mengakses target.
   </p>
 </div>
@@ -338,16 +204,10 @@ st.markdown(
 
 st.markdown(
     """
-<div style="display: flex; gap: 12px; margin-bottom: 1rem; flex-wrap: wrap;">
-  <div style="background: #161B22; border: 1px solid #30363D; border-radius: 8px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #8B949E;">
-    <span style="color: #00FFA3;">🔒</span> No URL Requests
-  </div>
-  <div style="background: #161B22; border: 1px solid #30363D; border-radius: 8px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #8B949E;">
-    <span style="color: #00FFA3;">🚫</span> No Crawling
-  </div>
-  <div style="background: #161B22; border: 1px solid #30363D; border-radius: 8px; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #8B949E;">
-    <span style="color: #58A6FF;">📊</span> Pattern-Based Analysis
-  </div>
+<div style="display: flex; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap;">
+  <div style="background: #F6F8FA; border: 1px solid #D0D7DE; border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; color: #656D76; display: flex; align-items: center; gap: 6px;">🔒 No URL Requests</div>
+  <div style="background: #F6F8FA; border: 1px solid #D0D7DE; border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; color: #656D76; display: flex; align-items: center; gap: 6px;">🚫 No Crawling</div>
+  <div style="background: #F6F8FA; border: 1px solid #D0D7DE; border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; color: #656D76; display: flex; align-items: center; gap: 6px;">📊 Pattern-Based Analysis</div>
 </div>
 """,
     unsafe_allow_html=True,
@@ -357,32 +217,31 @@ st.caption("_Hasil prediksi adalah alat bantu awal, bukan keputusan keamanan fin
 
 model_path = st.sidebar.text_input("Model path", value=DEFAULT_MODEL_PATH)
 artifact = ensure_demo_model(model_path)
+model_info = get_model_info(model_path, artifact)
+st.sidebar.markdown("#### ℹ️ Informasi Model")
+st.sidebar.markdown(f"**Tipe model:** `{model_info['Tipe model']}`")
+st.sidebar.markdown(f"**Tanggal training:** `{model_info['Tanggal training']}`")
+st.sidebar.markdown(f"**Jumlah fitur:** `{model_info['Jumlah fitur']}`")
+st.sidebar.divider()
 st.sidebar.markdown(
     """
-<div style="padding: 1rem 0 0.5rem 0; border-bottom: 1px solid #30363D; margin-bottom: 1rem;">
-  <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: #8B949E;">
-    ℹ️ Informasi Model
-  </div>
+<div style="
+  background: #F6F8FA;
+  border: 1px solid #D0D7DE;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  color: #656D76;
+">
+  📦 Dataset<br>
+  <strong style="color: #1F2328;">507.192 URL · Kaggle</strong>
 </div>
 """,
     unsafe_allow_html=True,
 )
-for key, value in get_model_info(model_path, artifact).items():
-    sidebar_info_item(key, value)
-st.sidebar.markdown(
-    """
-<div style="background:#0D1117;border:1px solid #30363D;border-radius:8px;padding:0.8rem;margin-top:1rem;">
-  <div style="font-size:0.75rem;color:#8B949E;margin-bottom:2px;">Dataset</div>
-  <div style="font-family:monospace;color:#58A6FF;font-weight:600;">507.192 URL · Kaggle</div>
-</div>
-<hr>
-<div style="color:#8B949E;font-size:0.78rem;line-height:1.5;">
-  CyberGuard AI · Proyek ML Defensif<br>
-  Tidak melakukan request ke URL target.
-</div>
-""",
-    unsafe_allow_html=True,
-)
+st.sidebar.divider()
+st.sidebar.caption("CyberGuard AI · Proyek ML Defensif")
+st.sidebar.caption("Tidak melakukan request ke URL target.")
 
 single_tab, batch_tab = st.tabs(["🔍 Analisis URL", "📋 Analisis Batch"])
 
@@ -412,15 +271,7 @@ with single_tab:
                 risk_score = result["risk_score"]
                 prediction = result["prediction"]
                 result_card(prediction)
-                risk_score_card(risk_score, prediction)
-                st.markdown(
-                    f"""
-<div style="color:#8B949E;font-family:monospace;margin-bottom:1rem;">
-  Risk level: <span style="color:#E6EDF3;font-weight:700;">{result['risk_level']}</span>
-</div>
-""",
-                    unsafe_allow_html=True,
-                )
+                risk_score_card(risk_score, prediction, result["risk_level"])
 
                 features_df = pd.DataFrame([extract_url_features(url)]).T.reset_index()
                 features_df.columns = ["feature", "value"]
@@ -446,7 +297,7 @@ with batch_tab:
         results = predict_batch(str(temp_path), model_path, "reports/batch_predictions.csv")
 
         def color_prediction(value):
-            return "background-color: #2d1f1f; color: #FF4444" if value == 1 else "background-color: #10251d; color: #00FFA3"
+            return "background-color: #FFEBE9; color: #CF222E" if value == 1 else "background-color: #DAFBE1; color: #116329"
 
         st.dataframe(results.style.applymap(color_prediction, subset=["prediction"]), use_container_width=True)
         csv = results.to_csv(index=False).encode("utf-8")
