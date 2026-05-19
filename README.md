@@ -3,6 +3,7 @@
 **CyberGuard AI** adalah sistem machine learning defensif untuk membantu mengklasifikasikan URL dan konten email sebagai legitimate atau berisiko phishing. Proyek ini menganalisis pola URL, sinyal typosquatting, dan teks email tanpa membuka atau mengakses URL target.
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Streamlit-2DA44E?style=for-the-badge&logo=streamlit&logoColor=white)](https://cyberguard-ai-eqssmzk9t8p5wkn93yg6yr.streamlit.app/)
+[![Tests](https://img.shields.io/github/actions/workflow/status/LuthfiMirza/cyberguard-ai/tests.yml?branch=main&style=for-the-badge&label=Tests)](https://github.com/LuthfiMirza/cyberguard-ai/actions/workflows/tests.yml)
 ![Python](https://img.shields.io/badge/Python-3.9%2B-blue?style=for-the-badge&logo=python&logoColor=white)
 ![Security](https://img.shields.io/badge/Scope-Defensive%20Security-0A7F42?style=for-the-badge)
 ![ML](https://img.shields.io/badge/ML-XGBoost%20%7C%20Scikit--learn-orange?style=for-the-badge)
@@ -38,6 +39,19 @@ Buka live dashboard:
 ```text
 https://cyberguard-ai-eqssmzk9t8p5wkn93yg6yr.streamlit.app/
 ```
+
+### Dashboard Preview
+
+Dashboard Streamlit menyediakan dua mode analisis:
+
+- **Analisis URL** untuk mengecek satu URL dan opsional subject/body email.
+- **Analisis Batch** untuk upload CSV berisi banyak URL.
+
+> Screenshot dashboard dapat ditambahkan ke `docs/assets/dashboard-preview.png`, lalu ditampilkan di README dengan:
+>
+> ```markdown
+> ![CyberGuard AI Dashboard](docs/assets/dashboard-preview.png)
+> ```
 
 Contoh input untuk demo:
 
